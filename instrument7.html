@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+
+
+    <header>
+    <h1><font color = "black"> Basic Web Audio UGens and Sequencer</font></h1>
+    </header>
+    <p class = "monospace"></p2>
+    <br>
+    <br>
+ 
+
+<script>
+
+//create web audio api node
+context = new AudioContext;
+
+
+//creating a gain
+var gain = context.createGain();
+
+
+//default wave
+
+var wave = context.createOscillator();
+wave.frequency.value = 400;
+gain.gain.value = 0;
+wave.type = null;
+wave.connect(gain);
+//starting default wave
+wave.start();
+
+
+//testing different waves
+function Sine() {
+wave.type = 'sine';
+freq = document.getElementById('freq').value;
+wave.frequency.value = freq;
+wave.connect(gain);
+gain.connect(context.destination);
+//getting volume input
+var vol = document.getElementById('volume').value;
+
+//setting a super simple envelope
+var startime = parseFloat(document.getElementById('startime').value);
+var endtime = parseFloat(document.getElementById('endtime').value);
+gain.gain.linearRampToValueAtTime(vol, context.currentTime + startime);
+gain.gain.linearRampToValueAtTime(0,  context.currentTime + endtime);
+}
+
+function Saw() {
+var freq = document.getElementById('freq').value;
+wave.type = 'sawtooth';
+wave.frequency.value = freq;
+wave.connect(gain);
+gain.connect(context.destination);
+var vol = parseFloat(document.getElementById('volume').value);
+//console.log(vol);
+//setting a super simple envelope
+var startime = parseFloat(document.getElementById('startime').value);
+var endtime = parseFloat(document.getElementById('endtime').value);
+//console.log(endtime);
+//console.log(context.currentTime);
+gain.gain.linearRampToValueAtTime(vol, context.currentTime + startime);
+gain.gain.linearRampToValueAtTime(0,  context.currentTime + endtime);
+
+}
+
+
+function Square() {
+wave.type = 'square';
+var freq = document.getElementById('freq').value;
+wave.frequency.value = freq;
+wave.connect(gain);
+gain.connect(context.destination);
+//gain.gain.value = vol;
+//getting volume input
+var vol = document.getElementById('volume').value;
+
+//setting a super simple envelope
+var startime = parseFloat(document.getElementById('startime').value);
+var endtime = parseFloat(document.getElementById('endtime').value);
+gain.gain.linearRampToValueAtTime(vol, context.currentTime + startime);
+gain.gain.linearRampToValueAtTime(0,  context.currentTime + endtime);
+
+
+}
+
+function Tri() {
+wave.type = 'triangle';
+var freq = document.getElementById('freq').value;
+wave.frequency.value = freq;
+
+//gain
+wave.connect(gain);
+gain.connect(context.destination);
+//gain.gain.value = vol;
+//getting volume input
+var vol = document.getElementById('volume').value;
+
+//setting a super simple envelope
+var startime = parseFloat(document.getElementById('startime').value);
+var endtime = parseFloat(document.getElementById('endtime').value);
+gain.gain.linearRampToValueAtTime(vol, context.currentTime + startime);
+gain.gain.linearRampToValueAtTime(0,  context.currentTime + endtime);
+
+}
+
+function stop() {
+gain.gain.value = 0;
+wave.disconnect(gain);
+gain.disconnect(context.destination);
+}
+
+//adding an envelope (not used in the instrument)
+function envOn(){
+var now = context.currentTime;
+gain.gain.cancelScheduledValues(now);
+gain.gain.setValuesAtTime(1, now + 0.2);
+gain.gain.linearRampToValueAtTime(0, now + 2);
+gain.connect(now);
+gain.connect(context.destination);
+}
+
+function envOff() {
+var now = context.currentTime;
+gain.gain.cancelScheduledValues(now);
+gain.gain.setValueAtTime(gain.gain, now);
+gain.gain.linearRampToValueAtTime(0,now+0.2);
+};
+
+</script>
+<body >
+      <font color = "black">
+ 
+       Set a Frequency:
+      <br>Frequency <input  type="text" value="440" id="freq"/>
+      <br>
+      <br>
+      <br> Set the Volume:
+      <br>Volume <input type="text" value= 0.75 id="volume" /input>
+                 <input  type= "button" value= "stop" onclick="stop();"/>
+      <br>     
+      <br> 
+      <br> Set an Envelope:
+      <br> Start Time <input type="text" value=1 id="startime" /input>
+          End Time   <input type="text" value=2 id="endtime" /input>
+      
+      <br> 
+      <br>
+  <br> Choose a Frequency:
+  <div><input  type= "button" value= "Sine" onclick="Sine();"/>
+  <input  type= "button" value= "Saw" onclick="Saw();"/>
+  <input  type= "button" value= "Square" onclick="Square();"/>
+  <input  type= "button" value= "Triangle" onclick="Tri();"/>
+  </font>
+  
+
+  <style>
+    
+   p.monospace {
+    font-family: "Lucida Console", Monaco, monospace;
+   }  
+   
+  body { 
+     background-image: url("mimbre9.jpg");
+     background-size: 24px 18px;   
+     background-repeat: repeat;   
+     padding: 50px 200px;
+     
+
+     background-position: center top;
+     background-color: white;
+  }
+  </style>
+
+
+
+
+
+  
+ 
+</body>
+<html>
